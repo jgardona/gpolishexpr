@@ -47,6 +47,17 @@ func (pe PollishEvaluator) Evaluate() (float64, error) {
 				var old_value float64
 				old_value, arguments = utils.Pop(arguments)
 				arguments = utils.Push(arguments, old_value-value)
+			case "*":
+				var old_value float64
+				old_value, arguments = utils.Pop(arguments)
+				arguments = utils.Push(arguments, old_value*value)
+			case "/":
+				var old_value float64
+				old_value, arguments = utils.Pop(arguments)
+				if value == 0 {
+					return 0.0, errors.New("cant divide by zero")
+				}
+				arguments = utils.Push(arguments, old_value/value)
 			default:
 				return 0.0, errors.New("function not implemented")
 			}
