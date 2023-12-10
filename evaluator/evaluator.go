@@ -2,11 +2,18 @@ package evaluator
 
 import (
 	"errors"
+	"math"
 	"strconv"
 	"strings"
 	"unicode"
 
 	"github.com/jgardona/polishexpr/utils"
+)
+
+var (
+	ErrWrongSolution  = errors.New("the solution must have only one answere")
+	ErrBadFunction    = errors.New("function not implemented")
+	ErrDivisionByZero = errors.New("cant divide by zero")
 )
 
 type PollishEvaluator struct {
@@ -20,52 +27,55 @@ func NewPolishEvaluator(expr string, vars []float64) PollishEvaluator {
 
 func (pe PollishEvaluator) Evaluate() (float64, error) {
 	tokens := strings.Split(pe.expression, " ")
-	arguments := []float64{}
+	arguments := make([]float64, 0, 3)
 
 	for _, token := range tokens {
 		if unicode.IsDigit(rune(token[0])) {
 			if result, err := strconv.ParseFloat(token, 64); err != nil {
 				return 0.0, err
 			} else {
-				arguments = utils.Push(arguments, result)
+				utils.Push(&arguments, result)
 			}
 		} else if strnum, ok := strings.CutPrefix(token, "$"); ok {
 			if index, err := strconv.ParseInt(strnum, 10, 64); err != nil {
 				return 0.0, err
 			} else {
-				arguments = utils.Push(arguments, pe.variables[index])
+				utils.Push(&arguments, pe.variables[index])
 			}
 		} else {
-			var value float64
-			value, arguments = utils.Pop(arguments)
+
+			value := utils.Pop(&arguments)
 			switch token {
 			case "+":
-				var old_value float64
-				old_value, arguments = utils.Pop(arguments)
-				arguments = utils.Push(arguments, old_value+value)
+				utils.Push(&arguments, utils.Pop(&arguments)+value)
 			case "-":
-				var old_value float64
-				old_value, arguments = utils.Pop(arguments)
-				arguments = utils.Push(arguments, old_value-value)
+				utils.Push(&arguments, utils.Pop(&arguments)-value)
 			case "*":
-				var old_value float64
-				old_value, arguments = utils.Pop(arguments)
-				arguments = utils.Push(arguments, old_value*value)
+				utils.Push(&arguments, utils.Pop(&arguments)*value)
 			case "/":
-				var old_value float64
-				old_value, arguments = utils.Pop(arguments)
 				if value == 0 {
-					return 0.0, errors.New("cant divide by zero")
+					return 0.0, ErrDivisionByZero
 				}
-				arguments = utils.Push(arguments, old_value/value)
+				utils.Push(&arguments, utils.Pop(&arguments)/value)
+			case "sin":
+				utils.Push(&arguments, math.Sin(value))
+			case "cos":
+				utils.Push(&arguments, math.Cos(value))
+			case "ln":
+				utils.Push(&arguments, math.Log(value))
+			case "exp":
+				utils.Push(&arguments, math.Exp(value))
+			case "sqrt":
+				utils.Push(&arguments, math.Sqrt(value))
+
 			default:
-				return 0.0, errors.New("function not implemented")
+				return 0.0, ErrBadFunction
 			}
 		}
 	}
 
 	if len(arguments) != 1 {
-		return 0.0, errors.New("the solution must have only one answere")
+		return 0.0, ErrWrongSolution
 	} else {
 		return arguments[0], nil
 	}
