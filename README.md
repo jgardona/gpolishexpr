@@ -34,7 +34,7 @@ assert.Equal(t, err, ErrBadFunction)
 ```go
 ev := NewPolishEvaluator("$0 $1 + 5 -", []float64{2.0, 3.0})
 result, err := ev.Evaluate()
-assert.Equal(t, 5.0, result)
+assert.Equal(t, 0.0, result)
 assert.NotNil(t, err)
 assert.Equal(t, err, ErrBadFunction)
 ```
