@@ -6,15 +6,15 @@ The list of supported functions are:
 
 **Arithmetic functions**: +, -, *, /
 
-**sin**: sine
+* **sin**: sine
 
-**cos**: cosine
+* **cos**: cosine
 
-**ln**: natural logarithm
+* **ln**: natural logarithm
 
-**exp**: exponent
+* **exp**: exponent
 
-**sqrt**: square root
+* **sqrt**: square root
 
 Arguments for these functions could be as usual constants, written as numbers, as variables, written as $var_number ($0, for example). The variable number is zero based index of variables vector.
 
