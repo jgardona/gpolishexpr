@@ -10,6 +10,18 @@ import (
 	"github.com/jgardona/polishexpr/utils"
 )
 
+const (
+	sum            = "+"
+	subtraction    = "-"
+	multiplication = "*"
+	division       = "/"
+	sine           = "sin"
+	cosine         = "cos"
+	logarithm      = "ln"
+	exponential    = "exp"
+	squareroot     = "sqrt"
+)
+
 var (
 	ErrWrongSolution  = errors.New("the solution must have only one answere")
 	ErrBadFunction    = errors.New("function not implemented")
@@ -46,26 +58,26 @@ func (pe PollishEvaluator) Evaluate() (float64, error) {
 
 			value := utils.Pop(&arguments)
 			switch token {
-			case "+":
+			case sum:
 				utils.Push(&arguments, utils.Pop(&arguments)+value)
-			case "-":
+			case subtraction:
 				utils.Push(&arguments, utils.Pop(&arguments)-value)
-			case "*":
+			case multiplication:
 				utils.Push(&arguments, utils.Pop(&arguments)*value)
-			case "/":
+			case division:
 				if value == 0 {
 					return 0.0, ErrDivisionByZero
 				}
 				utils.Push(&arguments, utils.Pop(&arguments)/value)
-			case "sin":
+			case sine:
 				utils.Push(&arguments, math.Sin(value))
-			case "cos":
+			case cosine:
 				utils.Push(&arguments, math.Cos(value))
-			case "ln":
+			case logarithm:
 				utils.Push(&arguments, math.Log(value))
-			case "exp":
+			case exponential:
 				utils.Push(&arguments, math.Exp(value))
-			case "sqrt":
+			case squareroot:
 				utils.Push(&arguments, math.Sqrt(value))
 
 			default:
